@@ -1,6 +1,7 @@
 extends CharacterBody2D
 class_name BaseCharacter
 
+var is_in_moutain: bool = true
 var _can_attack: bool = true
 var _attack_animation_name: String = ""
 
@@ -12,6 +13,10 @@ var _attack_animation_name: String = ""
 @export_category("Objects")
 @export var _animation: AnimationPlayer
 @export var _sprite2D: Sprite2D
+@export var _bridge: TileMap
+
+func _ready():
+	update_mountain_state(is_in_moutain)
 
 func _physics_process(delta):
 	_move()
@@ -60,3 +65,30 @@ func _on_animation_finished(_anim_name):
 	if _anim_name == "attack_hammer" or _anim_name == "attack_axe":
 		_can_attack = true
 		set_physics_process(true)
+		
+func _update_collision_layer_mask(_type: String) -> void:
+	if _type == "in":
+		set_collision_layer_value(1, false)
+		set_collision_layer_value(2, true)
+		
+		set_collision_mask_value(1, false)
+		set_collision_mask_value(2, true)
+		
+	if _type == "out":
+		set_collision_layer_value(1, true)
+		set_collision_layer_value(2, false)
+		
+		set_collision_mask_value(1, true)
+		set_collision_mask_value(2, false)
+
+func update_mountain_state(_state: bool) -> void:
+	is_in_moutain = _state
+	
+	if is_in_moutain:
+		_bridge.z_index = 0
+	
+	if is_in_moutain == false:
+		_bridge.z_index = 1
+		
+func get_is_in_moutain() -> bool:
+	return is_in_moutain
