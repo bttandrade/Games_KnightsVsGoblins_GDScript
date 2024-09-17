@@ -7,13 +7,16 @@ var _attack_animation_name: String = ""
 
 @export_category("Variables")
 @export var _move_speed: float = 128.0
-@export var _left_attack_name: String = ""
+@export var _left_attack_name: String = ""	
 @export var _right_attack_name: String = ""
+@export var _min_attack: int = 1
+@export var _max_attack: int = 5
 
 @export_category("Objects")
 @export var _animation: AnimationPlayer
 @export var _sprite2D: Sprite2D
-@export var _bridge: TileMap
+@export var _bridge: TileMapLayer
+@export var _attack_area_collision: CollisionShape2D
 
 func _ready():
 	update_mountain_state(is_in_moutain)
@@ -46,9 +49,11 @@ func _attack() -> void:
 func _animate() -> void:
 	if velocity.x > 0:
 		_sprite2D.flip_h = false
+		_attack_area_collision.position.x = 64
 		
 	if velocity.x < 0:
 		_sprite2D.flip_h = true
+		_attack_area_collision.position.x = -64
 
 	if _can_attack == false:
 		_animation.play(_attack_animation_name)
@@ -92,3 +97,8 @@ func update_mountain_state(_state: bool) -> void:
 		
 func get_is_in_moutain() -> bool:
 	return is_in_moutain
+
+
+func _on_attack_area_body_entered(_body: Node2D) -> void:
+	if _body is PhysicsTree:
+		_body._update_health([_min_attack,_max_attack])
