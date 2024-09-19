@@ -49,11 +49,11 @@ func _attack() -> void:
 func _animate() -> void:
 	if velocity.x > 0:
 		_sprite2D.flip_h = false
-		_attack_area_collision.position.x = 64
+		_attack_area_collision.position.x = 24
 		
 	if velocity.x < 0:
 		_sprite2D.flip_h = true
-		_attack_area_collision.position.x = -64
+		_attack_area_collision.position.x = -24
 
 	if _can_attack == false:
 		_animation.play(_attack_animation_name)
@@ -100,5 +100,8 @@ func get_is_in_moutain() -> bool:
 
 
 func _on_attack_area_body_entered(_body: Node2D) -> void:
-	if _body is PhysicsTree:
+	if ( 
+		_body is PhysicsTree or 
+		_body is Sheep
+		):
 		_body._update_health([_min_attack,_max_attack])
